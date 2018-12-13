@@ -2,26 +2,30 @@ import React, { Component } from "react";
 
 import '../styles/App.css';
 
+// version 1
 
 class App extends Component {
-    render() {
-        return (
-            <div>
-              <h1>My React App3!</h1><div className = "mike" color="fff">mike</div>
-              <div className = "mike2" color="fff">
-                mike2
-              </div>
-
-              <div
-                className="mike3"
-              >
-                mike3 hi marina
-              </div>
-
-            </div>
-
-        );
-    }
+  constructor(props) {
+    super(props);
+    this.state = {
+      activeUsers: null
+    };
+  }
+  componentDidMount() {
+    setTimeout( () => {
+      this.setState({
+        activeUsers: 1273
+      });
+    }, 2500);
+  }
+  render() {
+    return (
+      <div>
+        <h1>Active User: { this.state.activeUsers
+        }</h1>
+      </div>
+    );
+  }
 }
 
 
