@@ -1,28 +1,57 @@
 import React, { Component } from "react";
+import PropTypes from 'prop-types';
 
 import '../styles/App.css';
 
-// version 1
+// version 3
 
-class App extends Component {
+class OnlyEvens extends Component {
+  constructor(props) {
+    super(props);
+  }
+  shouldComponentUpdate(nextProps, nextState) {
+    console.log('Should I update?');
+    console.log(nextProps);
+    /* if ( nextProps.value % 2 == 0) {
+    return true;
+     } else {
+       return false;
+     }*/
+     return true;
+  }
+  componentWillReceiveProps(nextProps) {
+    console.log('Receiving new props...');
+  }
+  componentDidUpdate() {
+    console.log('Component re-rendered.');
+  }
+  render() {
+    var myColor = ( this.props.value % 2 == 0) ? 'red' : 'blue';
+    return <h1 style={{color: myColor}} >{this.props.value}</h1>
+  }
+}
+OnlyEvens.propTypes = {
+  value: PropTypes.string.isRequired,
+};
+
+class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      activeUsers: null
+      value: 0
     };
+    this.addValue = this.addValue.bind(this);
   }
-  componentDidMount() {
-    setTimeout( () => {
-      this.setState({
-        activeUsers: 1273
-      });
-    }, 2500);
+  addValue() {
+    this.setState({
+      value: this.state.value + 1
+    });
   }
   render() {
     return (
       <div>
-        <h1>Active User: { this.state.activeUsers
-        }</h1>
+        <button onClick={this.addValue}>Add</button>
+        <OnlyEvens value={this.state.value}/>
       </div>
     );
   }
