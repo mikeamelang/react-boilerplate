@@ -26,8 +26,11 @@ class OnlyEvens extends Component {
     console.log('Component re-rendered.');
   }
   render() {
-    var myColor = ( this.props.value % 2 == 0) ? 'red' : 'blue';
-    return <h1 style={{color: myColor}} >{this.props.value}</h1>
+    var myColor = ( this.props.value % 2 == 0) ? 'yellow' : 'blue';
+    var myStyle = {
+      color: myColor
+    };
+    return <h1 style={myStyle} >{this.props.value}</h1>
   }
 }
 OnlyEvens.propTypes = {
