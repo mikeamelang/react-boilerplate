@@ -6,13 +6,15 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack-dev-server --mode development --open --hot",
+    "watch": "webpack --watch",
     "build": "webpack --mode production"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "react": "^16.6.3",
-    "react-dom": "^16.6.3"
+    "react-dom": "^16.6.3",
+    "react-redux": "^6.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.1.6",

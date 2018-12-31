@@ -1,65 +1,110 @@
-import React, { Component } from "react";
+import React from "react"; // , { Component }
 import PropTypes from 'prop-types';
+import { Provider } from 'react-redux';
 
-import '../styles/App.css';
+//import '../styles/App.css';
 
-// version 3
 
-class OnlyEvens extends Component {
-  constructor(props) {
-    super(props);
+
+// Redux:
+const ADD = 'ADD';
+
+const addMessage = (message) => {
+  return {
+    type: ADD,
+    message: message
   }
-  shouldComponentUpdate(nextProps, nextState) {
-    console.log('Should I update?');
-    console.log(nextProps);
-    /* if ( nextProps.value % 2 == 0) {
-    return true;
-     } else {
-       return false;
-     }*/
-     return true;
-  }
-  componentWillReceiveProps(nextProps) {
-    console.log('Receiving new props...');
-  }
-  componentDidUpdate() {
-    console.log('Component re-rendered.');
-  }
-  render() {
-    var myColor = ( this.props.value % 2 == 0) ? 'yellow' : 'blue';
-    var myStyle = {
-      color: myColor
-    };
-    return <h1 style={myStyle} >{this.props.value}</h1>
-  }
-}
-OnlyEvens.propTypes = {
-  value: PropTypes.string.isRequired,
 };
 
-class App extends React.Component {
+const messageReducer = (state = [], action) => {
+  switch (action.type) {
+    case ADD:
+      return [
+        ...state,
+        action.message
+      ];
+    default:
+      return state;
+  }
+};
+
+const store = Redux.createStore(messageReducer);
+
+// React:
+const Provider = ReactRedux.Provider;
+const connect = ReactRedux.connect;
+
+// Change code below this line
+class Presentational extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: 0
-    };
-    this.addValue = this.addValue.bind(this);
+      input: '',
+    }
+    this.handleChange = this.handleChange.bind(this);
+    this.submitMessage = this.submitMessage.bind(this);
   }
-  addValue() {
+  handleChange(event) {
     this.setState({
-      value: this.state.value + 1
+      input: event.target.value
     });
   }
+  submitMessage() {
+    this.props.submitNewMessage(this.state.input);
+    this.setState({
+      input: '',
+    });
+  }
+
   render() {
     return (
       <div>
-        <button onClick={this.addValue}>Add</button>
-        <OnlyEvens value={this.state.value}/>
+        <h2>Type in a new Message:</h2>
+        <input
+          value={this.state.input}
+          onChange={this.handleChange}/><br/>
+        <button onClick={this.submitMessage}>Submit</button>
+        <ul>
+          {this.props.messages.map( (message, idx) => {
+              return (
+                 <li key={idx}>{message}</li>
+              )
+            })
+          }
+        </ul>
       </div>
     );
   }
 }
+Presentational.propTypes = {
+  messages: PropTypes.array.isRequired,
+  submitNewMessage: PropTypes.func.isRequired
+};
+// Change code above this line
 
+const mapStateToProps = (state) => {
+  return {messages: state}
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    submitNewMessage: (message) => {
+      dispatch(addMessage(message))
+    }
+  }
+};
+
+const Container = connect(mapStateToProps, mapDispatchToProps)(Presentational);
+
+class App extends React.Component {
+  render() {
+    return (
+      <Provider store={store}>
+        <Container/>
+      </Provider>
+    );
+  }
+}
 
 
 export default App;
