@@ -1,40 +1,47 @@
 import React from "react"; // , { Component }
 import PropTypes from 'prop-types';
-import { Provider } from 'react-redux';
+import { Provider, connect } from 'react-redux';
+import { createStore } from 'redux';
 
 //import '../styles/App.css';
 
 
-
 // Redux:
 const ADD = 'ADD';
+const REMOVE = 'REMOVE';
 
-const addMessage = (message) => {
+const doAddMessage = (message) => {
   return {
     type: ADD,
     message: message
   }
 };
 
-const messageReducer = (state = [], action) => {
+const doRemoveMessage = (message) => {
+  return {
+    type: REMOVE,
+    message: message
+  }
+};
+
+
+const applyMessage = (state = [], action) => {
   switch (action.type) {
     case ADD:
       return [
         ...state,
         action.message
       ];
+    case REMOVE:
+      return state.filter( msg => msg != action.message );
     default:
       return state;
   }
 };
 
-const store = Redux.createStore(messageReducer);
+const store = createStore(applyMessage);
 
 // React:
-const Provider = ReactRedux.Provider;
-const connect = ReactRedux.connect;
-
-// Change code below this line
 class Presentational extends React.Component {
   constructor(props) {
     super(props);
@@ -42,15 +49,22 @@ class Presentational extends React.Component {
       input: '',
     }
     this.handleChange = this.handleChange.bind(this);
-    this.submitMessage = this.submitMessage.bind(this);
+    this.onAddMessage = this.onAddMessage.bind(this);
+    this.onRemoveMessage = this.onRemoveMessage.bind(this);
   }
   handleChange(event) {
     this.setState({
       input: event.target.value
     });
   }
-  submitMessage() {
-    this.props.submitNewMessage(this.state.input);
+  onAddMessage() {
+    this.props.propAddMessage(this.state.input);
+    this.setState({
+      input: '',
+    });
+  }
+  onRemoveMessage() {
+    this.props.propRemoveMessage(this.state.input);
     this.setState({
       input: '',
     });
@@ -63,7 +77,8 @@ class Presentational extends React.Component {
         <input
           value={this.state.input}
           onChange={this.handleChange}/><br/>
-        <button onClick={this.submitMessage}>Submit</button>
+        <button onClick={this.onAddMessage}>Add</button>
+        <button onClick={this.onRemoveMessage}>Remove</button>
         <ul>
           {this.props.messages.map( (message, idx) => {
               return (
@@ -78,9 +93,9 @@ class Presentational extends React.Component {
 }
 Presentational.propTypes = {
   messages: PropTypes.array.isRequired,
-  submitNewMessage: PropTypes.func.isRequired
+  propAddMessage: PropTypes.func.isRequired,
+  propRemoveMessage: PropTypes.func.isRequired,
 };
-// Change code above this line
 
 const mapStateToProps = (state) => {
   return {messages: state}
@@ -88,8 +103,11 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    submitNewMessage: (message) => {
-      dispatch(addMessage(message))
+    propAddMessage: (message) => {
+      dispatch(doAddMessage(message))
+    },
+    propRemoveMessage: (message) => {
+      dispatch(doRemoveMessage(message))
     }
   }
 };
